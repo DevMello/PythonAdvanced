@@ -1,0 +1,62 @@
+[
+    {
+        "email": "carrtaylor@example.com",
+        "password": "$jP8zY3Qg2",
+        "name": "Anthony Johnson",
+        "address": "42642 Jared Isle\nWest Edwardtown, KS 01965"
+    },
+    {
+        "email": "baileykevin@example.org",
+        "password": "*T76Ok1giv",
+        "name": "Jessica Nichols",
+        "address": "443 Faulkner Points\nTylerborough, TN 53403"
+    },
+    {
+        "email": "fhowell@example.com",
+        "password": "iIr1Xgy33&",
+        "name": "Alyssa Patrick",
+        "address": "2209 Odom Station\nNorth Gabriel, VT 41937"
+    },
+    {
+        "email": "cisnerosshawn@example.net",
+        "password": "V14DDJr0)t",
+        "name": "Lindsay Lewis",
+        "address": "13700 Melanie Island Apt. 708\nLake Cliffordhaven, AS 90860"
+    },
+    {
+        "email": "wangjennifer@example.net",
+        "password": "a)7OetOxk6",
+        "name": "Peggy Lynn",
+        "address": "7313 Virginia Hills Suite 843\nEast Stevenmouth, OR 69149"
+    },
+    {
+        "email": "wardkelly@example.net",
+        "password": "$^5SQTej^M",
+        "name": "Heather Lynch",
+        "address": "303 Avery Dam Apt. 305\nLeeshire, ME 21824"
+    },
+    {
+        "email": "mchristian@example.net",
+        "password": "%95ZgjQqy1",
+        "name": "Kim Stout",
+        "address": "PSC 7669, Box 8892\nAPO AP 05084"
+    },
+    {
+        "email": "johnsutton@example.org",
+        "password": "$19Lml5clT",
+        "name": "Elizabeth Buchanan",
+        "address": "6547 Woodward Via Apt. 828\nSouth Scottfurt, OR 81437"
+    },
+    {
+        "email": "nicole32@example.org",
+        "password": "(@02rDmVd)",
+        "name": "Daniel Anderson",
+        "address": "29408 Steele Road Suite 726\nJustinview, UT 35713"
+    },
+    {
+        "email": "jwarren@example.org",
+        "password": "s0+*77Go@J",
+        "name": "Rebecca Turner",
+        "address": "2991 Paul Forges Apt. 368\nAaronbury, PR 02883"
+    }
+]

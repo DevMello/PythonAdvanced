@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "tailwind": "npx tailwindcss -i ./static/src/css/input.css -o ./static/dist/css/styles.css --minify --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  },
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10"
+  }
+}
