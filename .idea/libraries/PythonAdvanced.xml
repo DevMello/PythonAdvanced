@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="PythonAdvanced">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/final.zip!/" />
+      <root url="jar://$PROJECT_DIR$/FinalProject.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
