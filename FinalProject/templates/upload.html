@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/styles.css') }}">
-    <title>Upload Image</title>
+    <title>Sell Quick - Upload Image</title>
 
     <style>
         main {
@@ -212,8 +213,8 @@
             <div class="flex h-16 items-center justify-between">
                 <!-- Logo -->
                 <a href="{{url_for('home')}}" class="flex">
-                    <span class="sr-only">Your Company</span>
-                    <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="">
+                    <span class="sr-only">Sell Quick</span>
+                    <img class="h-8 w-auto" src="{{url_for('logo')}}" alt="">
                 </a>
                 <!-- Other header content here -->
 
@@ -241,18 +242,18 @@
 <!-- Main content -->
 <main>
     <div class="modal">
-        <form class="form" action="/create" method="POST">
+        <form class="form" action="/upload" method="POST" enctype="multipart/form-data">
             <div class="input_container">
                 <label for="product_name" class="input_label">Product Name</label>
-                <input id="product_name" class="input_field" type="text" name="product_name" placeholder="Enter product name">
+                <input id="product_name" class="input_field" type="text" name="name" placeholder="Enter product name" required>
             </div>
             <div class="input_container">
                 <label for="product_description" class="input_label">Description</label>
-                <textarea id="product_description" class="input_field" name="product_description" placeholder="Enter product description"></textarea>
+                <textarea id="product_description" class="input_field" name="description" placeholder="Enter product description"></textarea>
             </div>
             <div class="input_container">
                 <label for="product_price" class="input_label">Price</label>
-                <input id="product_price" class="input_field" type="number" name="product_price" placeholder="Enter product price">
+                <input id="product_price" class="input_field" type="number" step=".01" name="price" placeholder="Enter product price" required>
             </div>
             <div class="separator">
                 <hr class="line">
@@ -266,7 +267,7 @@
                 <div class="text">
                     <span>Click to upload image</span>
                 </div>
-                <input id="file" type="file" name="product_image">
+                <input id="file" type="file" name="file">
             </label>
             <button type="submit" class="purchase--btn">Create Product</button>
         </form>
@@ -278,12 +279,42 @@
     <h2 id="footer-heading" class="sr-only">Footer</h2>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="border-t border-gray-800 py-10">
-            <p class="text-sm text-gray-400">Copyright &copy; 2021 Your Company, Inc.</p>
+            <p class="text-sm text-gray-400">Copyright &copy; 2024 Sell Quick, Inc.</p>
         </div>
     </div>
 </footer>
 
 <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('.form');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            
+            // Get the form data
+            const formData = new FormData(form);
+
+            // Perform any additional actions if needed
+            
+            // Submit the form
+            fetch('{{url_for('upload_file')}}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response => {
+                // Handle the response
+                console.log(response);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error(error);
+            });
+        });
+    });
+
+
     const fileInput = document.getElementById('file');
     const textSpan = document.querySelector('.text span');
 

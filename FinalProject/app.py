@@ -1,23 +1,103 @@
 import hashlib
 import os
 import uuid
+from decimal import Decimal
 
 from flask import Flask, render_template, request, jsonify, make_response, redirect, send_file, send_from_directory
 import mysql.connector
 from werkzeug.security import check_password_hash
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app)
 mydb = mysql.connector.connect(
     host="localhost",
     user="devmello",
-    password="Pranav2019",
+    password="password",
     database="Test Database"
 )
 
 UPLOAD_FOLDER = 'images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+@app.route('/order',methods=['POST'])
+def order():
+    # totalAmount = request.json.get('totalAmount')
+    paymentType= request.json.get('cash')
+
+    if paymentType:
+        paymentType = "Cash"
+    else:
+        paymentType = "Card"
+
+    email = request.cookies.get('email')
+    cursor = mydb.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Users WHERE cookie = %s", (email,))
+    user = cursor.fetchone()
+    
+    product_details = ""
+    if user:        
+        cursor.execute("SELECT * FROM Cart WHERE UserID = %s", (user['Id'],))
+        cart = cursor.fetchall()
+        products = []
+        for item in cart:
+            cursor.execute("SELECT * FROM Products WHERE ID = %s", (item['Products_id'],))
+            product = cursor.fetchone()
+            products.append((product, item['Id']))  
+
+        print(products)
+        total_price = sum(product[0]['price'] for product in products)
+        shipping_cost = 20
+        tax = 0.09 * (float(total_price) + float(shipping_cost))
+        total = float(total_price) + float(shipping_cost) + float(tax)
+        total = round(total, 2)
+        print("Total price:", total)
+
+        for product in products:
+            product_details += str(product[0]["ID"]) + ","
+        product_details = product_details[:-1]
+
+        cursor.execute("INSERT INTO Orders (userId, details, paymentType, totalAmount, date) VALUES (%s, %s, %s, %s, NOW())",
+                       (user['Id'], product_details, paymentType, total))
+
+        mydb.commit()
+        print("Order Inserted - success")
+        # delete items from cart
+        cursor.execute("DELETE FROM Cart WHERE UserID = %s", (user['Id'],))
+        mydb.commit()
+        cursor.close()
+        print("Cart Item Removed - success")
+
+
+
+        return jsonify({'total': total}), 201
+
+        # cursor.execute("SELECT * FROM Cart WHERE UserID = %s", (userId,))
+        # cartDetails = cursor.fetchall()
+        # if cartDetails:
+        #     print("Cart details")
+        #     for product in cartDetails:
+        #         product_details += str(product["Products_id"]) + ","
+        #         total_amount += Decimal(product["price"])  # Add product price to total amount
+
+        #     product_details = product_details[:-1]
+        #     print("Total price:", total_amount)
+        #     # #productdetails = "1,2,3,4,4,1"
+        #     # cursor.execute("INSERT INTO ORDERS (userId,productDetails,paymentType,totalAmount) VALUES (%s, %s, %s, %s)",(userId,productDetails,paymentType,totalAmount))
+                                                                                                                                     
+        #     # mydb.commit()
+        #     # print("Order Inserted - success")
+
+        #     # #DELETE ITEM FROM CART
+        #     # cursor.execute("DELETE FROM CART WHERE UserID = %s", (userId,))
+        #     # mydb.commit()       
+        #     # cursor.close() 
+
+        #     # print("Cart Item Removed - success")           
+        #     return jsonify({'message': 'Order Placed successfully'}), 201
+
+    else:
+        return jsonify({'error': 'Order not Placed'}), 404
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -52,7 +132,7 @@ def passlogin():
     cursor.execute("SELECT * FROM Users WHERE email = %s", (email,))
     user = cursor.fetchone()
 
-    if user and (hash_data(password) == user['Password']):
+    if user and (hash_data(password) == user['password']):
         # Generate a unique cookie
         cookie = str(uuid.uuid4())
 
@@ -94,7 +174,7 @@ def product():
     if product is None:
         return "Product not found", 404
 
-    return render_template("product.html", product=product)
+    return render_template("product.html", product=product, productCount=productCount(request.cookies.get('email')))
 
 
 @app.route('/passregister', methods=['POST'])
@@ -187,7 +267,7 @@ def cart():
             products.append((product, item['Id']))  
         product_count = len(products)
         print(products)
-        total_price = sum(product[0]['Price'] for product in products)
+        total_price = sum(product[0]['price'] for product in products)
         shipping_cost = 20
         tax = 0.09 * (float(total_price) + float(shipping_cost))
         total = float(total_price) + float(shipping_cost) + float(tax)
@@ -252,8 +332,6 @@ def upload_file():
         price = request.form.get('price')
         cookie = request.cookies.get('email')
 
-
-
         cursor = mydb.cursor(dictionary=True)
         cursor.execute("SELECT * FROM Users WHERE cookie = %s", (cookie,))
         user = cursor.fetchone()
@@ -301,6 +379,10 @@ def get_image(product_id):
         if cursor:
             cursor.close()
 
+@app.route('/logo')
+def logo():
+    return send_from_directory(UPLOAD_FOLDER, 'logo.png')
+
 
 @app.route('/create', methods=['GET', 'POST'])
 def create():
@@ -337,7 +419,11 @@ def create():
         cursor.close()
 
         return redirect('/products')
+    
+@app.errorhandler(404) 
+def not_found(e): 
+  return render_template("404.html") 
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run('0.0.0.0', 5000, debug=True)
